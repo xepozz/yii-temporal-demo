@@ -1,0 +1,48 @@
+rpc:
+  listen: tcp://127.0.0.1:6001
+
+server:
+  command: "php -dxdebug.mode=debug public/index.php"
+  # If you are using symfony 5.3+ and the new Runtime component:
+  # remove the previous `command` line above and uncomment the line below.
+  # command: "php public/index.php"
+#  env:
+#    APP_RUNTIME: Baldinof\RoadRunnerBundle\Runtime\Runtime
+
+http:
+  address: 0.0.0.0:8080
+  middleware: [ "static", "gzip" ]
+  pool:
+    num_workers: 2
+  uploads:
+    forbid: [ ".php", ".exe", ".bat" ]
+  static:
+    dir: "public"
+    forbid: [ ".php", ".htaccess" ]
+
+temporal:
+  address: localhost:7233
+  activities:
+    num_workers: 5
+
+logs:
+  mode: development
+  channels:
+    http:
+      level: debug # Log all http requests, set to info to disable
+    server:
+      level: info # Everything written to worker stderr is logged
+      mode: raw
+    metrics:
+      level: debug
+    temporal:
+      level: info
+
+reload:
+  enabled: true
+  interval: 1s
+  patterns: [".php", ".yaml"]
+  services:
+    http:
+      dirs: ["."]
+      recursive: true

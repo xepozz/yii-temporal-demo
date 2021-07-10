@@ -1,51 +1,84 @@
-<p align="center">
-    <a href="https://github.com/yiisoft" target="_blank">
-        <img src="https://github.com/yiisoft.png" height="100px">
-    </a>
-    <h1 align="center">Yii _____</h1>
-    <br>
-</p>
+# Introduction
 
-[![Latest Stable Version](https://poser.pugx.org/yiisoft/_____/v/stable.png)](https://packagist.org/packages/yiisoft/_____)
-[![Total Downloads](https://poser.pugx.org/yiisoft/_____/downloads.png)](https://packagist.org/packages/yiisoft/_____)
-[![Build status](https://github.com/yiisoft/_____/workflows/build/badge.svg)](https://github.com/yiisoft/_____/actions?query=workflow%3Abuild)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yiisoft/_____/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/_____/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/yiisoft/_____/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/_____/?branch=master)
-[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyiisoft%2F_____%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yiisoft/_____/master)
-[![static analysis](https://github.com/yiisoft/_____/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/_____/actions?query=workflow%3A%22static+analysis%22)
-
-The package ...
+This is demo application to show how to work with [Temporal](https://github.com/temporalio/sdk-php) from Yii 3 application.
 
 ## Installation
+Install PHP dependencies:
 
-The package could be installed with composer:
+`composer i --prefer-dist`
+
+Get RoadRunner binary:
+
+`./vendor/bin/rr get-binary`
+
+Run docker containers:
+
+`docker-compose up -d`
+
+Run RoadRunner with debug mode (`-d` flag):
+
+`./rr serve -d`
+
+## Usage
+
+Now you can open [http://localhost:8080](http://localhost:8080/)
+and see small description about examples:
 
 ```
-composer install yiisoft/_____
+This project is example how to use Temporal with Yii 3 application.
+There are exist several examples how it works.
+Examples:
+If you want to see how "simple" workflow works click here.
+There is usual call non-blocking action. It should work as faster as you can run usual php code.
+If you want to see how "complicated" workflow works click here.
+There are imitation for blocking action. Different methods calls will run with random delay: from 1 to 5 seconds per call.
+If you want to see how "deferred" workflow works click here.
+There are imitation for asynchronous action. You will get "job id" and you can track the status in another endpoint.
+Logic for workflow will be same as "complicated" workflow.
 ```
 
-## General usage
+Also, you can open Temporal admin panel the located in [http://localhost:8088](http://localhost:8088/)
 
-## Unit testing
+---
 
-The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
+To add more **workflows** and **activities** you need to configure them in [config/common/temporal.php](config/common/temporal.php):
+You should add tag `temporal.workflow` for each new workflow and `temporal.activity` for each new activity.
 
+Example:
 ```php
-./vendor/bin/phpunit
+\App\Temporal\Workflow\LongWorkflow::class => [
+    'class' => \App\Temporal\Workflow\LongWorkflow::class,
+    'tags' => ['temporal.workflow']
+],
+
+\App\Temporal\Activity\CommonActivity::class => [
+    'class' => \App\Temporal\Activity\CommonActivity::class,
+    'tags' => ['temporal.activity']
+],
 ```
 
-## Mutation testing
+After that the workflows and activities will be automatically registered in [src/ApplicationRunner.php](src/ApplicationRunner.php)
 
-The package tests are checked with [Infection](https://infection.github.io/) mutation framework. To run it:
+## Contribution
 
-```php
-./vendor/bin/infection
-```
+You are welcome to add more examples, fix bugs or orthographic errors.
 
-## Static analysis
+## Useful links
 
-The code is statically analyzed with [Phan](https://github.com/phan/phan/wiki). To run static analysis:
+#### Used libraries
+[Temporal PHP SDK](https://github.com/temporalio/sdk-php)
+[RoadRunner](https://github.com/spiral/roadrunner)
 
-```php
-./vendor/bin/phan
-```
+#### Temporal:
+[Temporal (temporal.io)](https://temporal.io/)
+
+#### Workshops
+1st part [Оркестрируй это! Описываем сложные бизнес процессы на PHP - Антон Титов](https://www.youtube.com/watch?v=0NCMEaFMj_M)
+
+2nd part [Оркестрация и закон Мерфи: обрабатываем ошибки-бизнес процессов](https://www.youtube.com/watch?v=upL8o-OXYEc)
+
+#### Application (after run on local machine)
+[This application demo](http://localhost:8080/)
+
+[Temporal admin panel](http://localhost:8088/)
+
