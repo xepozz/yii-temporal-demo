@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Yiisoft\ErrorHandler\Renderer\HtmlRenderer;
+use Yiisoft\ErrorHandler\Renderer\JsonRenderer;
 use Yiisoft\ErrorHandler\ThrowableRendererInterface;
 
 /**
@@ -10,5 +10,5 @@ use Yiisoft\ErrorHandler\ThrowableRendererInterface;
  */
 
 return [
-    ThrowableRendererInterface::class => HtmlRenderer::class,
+    ThrowableRendererInterface::class => JsonRenderer::class,
 ];
