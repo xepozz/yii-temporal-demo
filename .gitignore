@@ -36,4 +36,5 @@ c3.php
 #tests
 tests/_data/database.db_snapshot
 
+.env
 rr

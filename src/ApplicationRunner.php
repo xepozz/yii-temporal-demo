@@ -27,9 +27,6 @@ use Yiisoft\Http\Method;
 use Yiisoft\Log\Logger;
 use Yiisoft\Log\Target\File\FileTarget;
 use Yiisoft\Yii\Event\ListenerConfigurationChecker;
-use Yiisoft\Yii\Web\Application;
-use Yiisoft\Yii\Web\SapiEmitter;
-use Yiisoft\Yii\Web\ServerRequestFactory;
 use function dirname;
 use function microtime;
 

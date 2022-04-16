@@ -24,8 +24,6 @@ services:
       - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml
     ports:
       - 7233:7233
-    volumes:
-      - ./dynamicconfig:/etc/temporal/config/dynamicconfig
 
   temporal-admin-tools:
     container_name: temporal-admin-tools
@@ -47,3 +45,4 @@ services:
       - TEMPORAL_PERMIT_WRITE_API=true
     ports:
       - 8088:8088
+
