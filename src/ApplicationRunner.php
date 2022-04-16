@@ -4,155 +4,57 @@ declare(strict_types=1);
 
 namespace App;
 
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestFactoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\UploadedFileFactoryInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 use Spiral\RoadRunner\Environment;
 use Spiral\RoadRunner\Environment\Mode;
-use Spiral\RoadRunner\Http\PSR7Worker;
-use Spiral\RoadRunner\Worker;
+use Spiral\RoadRunner\Http\PSR7WorkerInterface;
 use Temporal\WorkerFactory;
-use Throwable;
-use Yiisoft\Config\Config;
-use Yiisoft\Di\Container;
 use Yiisoft\ErrorHandler\ErrorHandler;
-use Yiisoft\ErrorHandler\Middleware\ErrorCatcher;
-use Yiisoft\ErrorHandler\Renderer\JsonRenderer;
-use Yiisoft\Http\Method;
-use Yiisoft\Log\Logger;
-use Yiisoft\Log\Target\File\FileTarget;
-use Yiisoft\Yii\Event\ListenerConfigurationChecker;
-use function dirname;
-use function microtime;
+use Yiisoft\Yii\Runner\ApplicationRunner as YiiApplicationRunner;
+use Yiisoft\Yii\Runner\Http\HttpApplicationRunner;
+use Yiisoft\Yii\Runner\RoadRunner\RoadRunnerApplicationRunner;
 
-final class ApplicationRunner
+/**
+ * `RoadRunnerApplicationRunner` runs the Yii HTTP application using RoadRunner.
+ */
+final class ApplicationRunner extends YiiApplicationRunner
 {
-    private bool $debug = false;
-    private float $startTime = 0.0;
+    private ?ErrorHandler $temporaryErrorHandler = null;
+    private ?PSR7WorkerInterface $psr7Worker = null;
 
-    public function debug(bool $enable = true): void
+    /**
+     * @param string $rootPath The absolute path to the project root.
+     * @param bool $debug Whether the debug mode is enabled.
+     * @param string|null $environment The environment name.
+     */
+    public function __construct(string $rootPath, bool $debug, ?string $environment)
     {
-        $this->debug = $enable;
+        parent::__construct($rootPath, $debug, $environment);
+        $this->bootstrapGroup = 'bootstrap-web';
+        $this->eventsGroup = 'events-web';
     }
 
     public function run(): void
     {
-        $this->startTime = microtime(true);
         // Register temporary error handler to catch error while container is building.
-        $tmpLogger = new Logger([new FileTarget(dirname(__DIR__) . '/runtime/logs/app.log')]);
-        $errorHandler = new ErrorHandler($tmpLogger, new JsonRenderer());
-        $this->registerErrorHandler($errorHandler);
+        $config = $this->getConfig();
+        $container = $this->getContainer($config, 'web');
 
-        $config = new Config(
-            dirname(__DIR__),
-            '/config/packages', // Configs path.
-        );
-
-        $container = new Container(
-            $config->get('web'),
-            $config->get('providers'),
-            [],
-            null,
-            $this->debug
-        );
-
-        // Register error handler with real container-configured dependencies.
-        $this->registerErrorHandler($container->get(ErrorHandler::class), $errorHandler);
-
-        $container = $container->get(ContainerInterface::class);
-
-        if ($this->debug) {
-            $container->get(ListenerConfigurationChecker::class)->check($config->get('events-web'));
-        }
+        $this->runBootstrap($config, $container);
+        $this->checkEvents($config, $container);
 
         $env = Environment::fromGlobals();
 
         if ($env->getMode() === Mode::MODE_TEMPORAL) {
             $this->runTemporal($container);
         } else if ($env->getMode() === Mode::MODE_HTTP) {
-            $this->runRoadrunner($container);
+            $runner = new RoadRunnerApplicationRunner($this->rootPath, $this->debug, $this->environment);
+            $runner->run();
         } else {
             // Leave support to run application as internal php server with: php -S 127.0.0.0:8080 public/index.php
-            $this->runApplication($container);
-        }
-    }
-
-    private function emit(RequestInterface $request, ResponseInterface $response): void
-    {
-        (new SapiEmitter())->emit($response, $request->getMethod() === Method::HEAD);
-    }
-
-    private function createThrowableHandler(Throwable $throwable): RequestHandlerInterface
-    {
-        return new class($throwable) implements RequestHandlerInterface {
-            private Throwable $throwable;
-
-            public function __construct(Throwable $throwable)
-            {
-                $this->throwable = $throwable;
-            }
-
-            public function handle(ServerRequestInterface $request): ResponseInterface
-            {
-                throw $this->throwable;
-            }
-        };
-    }
-
-    private function registerErrorHandler(ErrorHandler $registered, ErrorHandler $unregistered = null): void
-    {
-        if ($unregistered !== null) {
-            $unregistered->unregister();
-        }
-
-        if ($this->debug) {
-            $registered->debug();
-        }
-
-        $registered->register();
-    }
-
-    private function runApplication(ContainerInterface $container): void
-    {
-        $application = $container->get(Application::class);
-
-        $request = $container->get(ServerRequestFactory::class)->createFromGlobals();
-        $request = $request->withAttribute('applicationStartTime', $this->startTime);
-
-        $this->runYiiApplication($application, $request, fn($req, $res) => $this->emit($req, $res), $container);
-    }
-
-    private function runRoadrunner(ContainerInterface $container): void
-    {
-        $application = $container->get(Application::class);
-
-        $serverRequestFactory = $container->get(ServerRequestFactoryInterface::class);
-        $streamFactoryInterface = $container->get(StreamFactoryInterface::class);
-        $uploadedFileFactoryInterface = $container->get(UploadedFileFactoryInterface::class);
-
-        $worker = Worker::create();
-
-        $worker = new PSR7Worker(
-            $worker,
-            $serverRequestFactory,
-            $streamFactoryInterface,
-            $uploadedFileFactoryInterface
-        );
-
-        while ($request = $worker->waitRequest()) {
-            $request = $request
-                ->withAttribute('applicationStartTime', microtime(true));
-
-            try {
-                $this->runYiiApplication($application, $request, fn($req, $res) => $worker->respond($res), $container);
-            } catch (Throwable $e) {
-                $worker->getWorker()->error((string)$e);
-            }
+            $runner = new HttpApplicationRunner($this->rootPath, $this->debug, $this->environment);
+            $runner->run();
         }
     }
 
@@ -178,21 +80,5 @@ final class ApplicationRunner
         }
 
         $factory->run();
-    }
-
-    private function runYiiApplication(Application $application, ServerRequestInterface $request, \Closure $emitter, ContainerInterface $container): void
-    {
-        try {
-            $application->start();
-            $response = $application->handle($request);
-            $emitter($request, $response);
-        } catch (Throwable $throwable) {
-            $handler = $this->createThrowableHandler($throwable);
-            $response = $container->get(ErrorCatcher::class)->process($request, $handler);
-            $emitter($request, $response);
-        } finally {
-            $application->afterEmit($response ?? null);
-            $application->shutdown();
-        }
     }
 }

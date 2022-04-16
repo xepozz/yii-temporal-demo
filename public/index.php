@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-use Yiisoft\ErrorHandler\ErrorHandler;
-use Yiisoft\ErrorHandler\Renderer\JsonRenderer;
-use Yiisoft\Log\Logger;
-use Yiisoft\Log\Target\File\FileTarget;
-use Yiisoft\Yii\Runner\RoadRunner\RoadRunnerApplicationRunner;
-
 /**
  * @psalm-var string $_SERVER['REQUEST_URI']
  */
@@ -34,11 +28,5 @@ if (getenv('YII_ENV') === 'test') {
     }
 }
 
-// Run HTTP application runner
-$runner = (new RoadRunnerApplicationRunner(dirname(__DIR__), $_ENV['YII_DEBUG'], $_ENV['YII_ENV']))
-    ->withTemporaryErrorHandler(new ErrorHandler(
-        new Logger([new FileTarget(dirname(__DIR__) . '/runtime/logs/app.log')]),
-        new JsonRenderer(),
-    ))
-;
+$runner = (new \App\ApplicationRunner(dirname(__DIR__), $_ENV['YII_DEBUG'], $_ENV['YII_ENV']));
 $runner->run();
