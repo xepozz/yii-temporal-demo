@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace App;
 
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Spiral\RoadRunner\Environment;
 use Spiral\RoadRunner\Environment\Mode;
-use Spiral\RoadRunner\Http\PSR7WorkerInterface;
 use Temporal\WorkerFactory;
-use Yiisoft\ErrorHandler\ErrorHandler;
 use Yiisoft\Yii\Runner\ApplicationRunner as YiiApplicationRunner;
 use Yiisoft\Yii\Runner\Http\HttpApplicationRunner;
 use Yiisoft\Yii\Runner\RoadRunner\RoadRunnerApplicationRunner;
@@ -20,9 +17,6 @@ use Yiisoft\Yii\Runner\RoadRunner\RoadRunnerApplicationRunner;
  */
 final class ApplicationRunner extends YiiApplicationRunner
 {
-    private ?ErrorHandler $temporaryErrorHandler = null;
-    private ?PSR7WorkerInterface $psr7Worker = null;
-
     /**
      * @param string $rootPath The absolute path to the project root.
      * @param bool $debug Whether the debug mode is enabled.

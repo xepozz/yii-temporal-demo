@@ -1,5 +1,5 @@
 rpc:
-  listen: tcp://127.0.0.1:6001
+  listen: tcp://0.0.0.0:6001
 
 server:
   command: "php -dxdebug.mode=debug public/index.php"
@@ -20,10 +20,10 @@ http:
     dir: "public"
     forbid: [ ".php", ".htaccess" ]
 
-#temporal:
-#  address: localhost:7233
-#  activities:
-#    num_workers: 5
+temporal:
+  address: 0.0.0.0:7233
+  activities:
+    num_workers: 5
 
 logs:
   mode: development
