@@ -40,6 +40,7 @@
         "yiisoft/auth": "^3.0",
         "yiisoft/cache": "^1.0",
         "yiisoft/cache-file": "^1.0",
+        "yiisoft/classifier": "3.0.x-dev",
         "yiisoft/config": "^1.0",
         "yiisoft/data": "^3.0@dev",
         "yiisoft/data-response": "^1.0",
@@ -147,6 +148,15 @@
             "bootstrap-console": [
                 "$bootstrap",
                 "bootstrap-console.php"
+            ],
+            "tags": "tags.php",
+            "tags-web": [
+                "$tags",
+                "tags-web.php"
+            ],
+            "tags-console": [
+                "$tags",
+                "tags-console.php"
             ]
         }
     },
