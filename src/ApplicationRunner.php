@@ -38,6 +38,21 @@ final class ApplicationRunner extends YiiApplicationRunner
         $this->runBootstrap($config, $container);
         $this->checkEvents($config, $container);
 
+        $workflows = $container->get('tag@temporal.workflow');
+        $activities = $container->get('tag@temporal.activity');
+
+        $o=[];
+        foreach ($workflows as $workflow) {
+            $o[] = (get_class($workflow));
+        }
+
+        foreach ($activities as $activity) {
+            $o[] = ($activity);
+        }
+
+//        $o = print_r($o, true);
+//        exit($o);
+
         $env = Environment::fromGlobals();
 
         if ($env->getMode() === Mode::MODE_TEMPORAL) {
@@ -65,12 +80,15 @@ final class ApplicationRunner extends YiiApplicationRunner
         $workflows = $container->get('tag@temporal.workflow');
         $activities = $container->get('tag@temporal.activity');
 
+//        print_r($workflows, true);
+//        exit();
+
         foreach ($workflows as $workflow) {
             $worker->registerWorkflowTypes(get_class($workflow));
         }
 
         foreach ($activities as $activity) {
-            $worker->registerActivityImplementations($activity);
+            $worker->registerActivity(get_class($activity));
         }
 
         $factory->run();

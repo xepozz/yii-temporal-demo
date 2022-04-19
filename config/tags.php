@@ -6,13 +6,13 @@ use Temporal\Activity\ActivityInterface;
 use Temporal\Workflow\WorkflowInterface;
 use Yiisoft\Classifier\Classifier;
 
-$classifier = new Classifier(dirname(__DIR__) . '/../src');
+$classifier = new Classifier(dirname(__DIR__) . '/src');
 
 return [
-    'tag@temporal.workflow' => [
-        $classifier->withAttribute(WorkflowInterface::class)->find(),
+    'temporal.workflow' => [
+        ...iterator_to_array($classifier->withAttribute(WorkflowInterface::class)->find()),
     ],
-    'tag@temporal.activity' => [
-        $classifier->withAttribute(ActivityInterface::class)->find(),
+    'temporal.activity' => [
+        ...iterator_to_array($classifier->withAttribute(ActivityInterface::class)->find()),
     ],
 ];

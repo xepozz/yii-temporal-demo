@@ -280,5 +280,22 @@ return [
                 'bootstrap-console.php',
             ],
         ],
+        'tags' => [
+            '/' => [
+                'tags.php',
+            ],
+        ],
+        'tags-web' => [
+            '/' => [
+                '$tags',
+                'tags-web.php',
+            ],
+        ],
+        'tags-console' => [
+            '/' => [
+                '$tags',
+                'tags-console.php',
+            ],
+        ],
     ],
 ];

@@ -7,9 +7,9 @@ use App\Temporal\Workflow\FastWorkflow;
 use App\Temporal\Workflow\LongWorkflow;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Temporal\Client\WorkflowClientInterface;
+use Yiisoft\Router\CurrentRoute;
 use Yiisoft\Router\UrlGeneratorInterface;
 
 final class WorkflowController
@@ -29,9 +29,9 @@ final class WorkflowController
         $this->streamFactory = $streamFactory;
     }
 
-    public function simpleAction(ServerRequestInterface $request): ResponseInterface
+    public function simpleAction(CurrentRoute $route): ResponseInterface
     {
-        $name = (string)$request->getAttribute('name');
+        $name = (string)$route->getArgument('name');
         $start = microtime(true);
 
         $wf = $this->workflowClient->newWorkflowStub(FastWorkflow::class);
@@ -47,9 +47,9 @@ final class WorkflowController
         return $this->response($response);
     }
 
-    public function complicatedAction(ServerRequestInterface $request): ResponseInterface
+    public function complicatedAction(CurrentRoute $route): ResponseInterface
     {
-        $name = (string)$request->getAttribute('name');
+        $name = (string)$route->getArgument('name');
         $start = microtime(true);
 
         $wf = $this->workflowClient->newWorkflowStub(LongWorkflow::class);
@@ -65,9 +65,9 @@ final class WorkflowController
         return $this->response($response);
     }
 
-    public function asynchronousAction(UrlGeneratorInterface $urlGenerator, ServerRequestInterface $request): ResponseInterface
+    public function asynchronousAction(UrlGeneratorInterface $urlGenerator, CurrentRoute $route): ResponseInterface
     {
-        $name = (string)$request->getAttribute('name');
+        $name = (string)$route->getArgument('name');
         $start = microtime(true);
 
         $wf = $this->workflowClient->newWorkflowStub(LongWorkflow::class);
@@ -88,9 +88,9 @@ final class WorkflowController
         return $this->response($response);
     }
 
-    public function asynchronousStatusAction(ServerRequestInterface $request)
+    public function asynchronousStatusAction(CurrentRoute $route)
     {
-        $id = (string)$request->getAttribute('id');
+        $id = (string)$route->getArgument('id');
         $start = microtime(true);
 
         $wf = $this->workflowClient->newRunningWorkflowStub(LongWorkflow::class, $id);
