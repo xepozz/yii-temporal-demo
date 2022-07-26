@@ -1,13 +1,12 @@
+# Rich config example you may look at here
+# https://github.com/roadrunner-server/roadrunner/blob/master/.rr.yaml
+
 rpc:
   listen: tcp://0.0.0.0:6001
 
 server:
   command: "php -dxdebug.mode=debug public/index.php"
-  # If you are using symfony 5.3+ and the new Runtime component:
-  # remove the previous `command` line above and uncomment the line below.
   # command: "php public/index.php"
-#  env:
-#    APP_RUNTIME: Baldinof\RoadRunnerBundle\Runtime\Runtime
 
 http:
   address: 0.0.0.0:8080

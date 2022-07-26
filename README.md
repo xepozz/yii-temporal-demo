@@ -5,19 +5,25 @@ This is demo application to show how to work with [Temporal](https://github.com/
 ## Installation
 Install PHP dependencies:
 
-`composer i --prefer-dist`
+```shell
+composer i --prefer-dist
+```
 
-Get RoadRunner binary:
+Get `RoadRunner` binary:
 
-`./vendor/bin/rr get-binary`
+```shell
+./vendor/bin/rr get-binary
+```
 
 Run docker containers:
 
 `docker-compose up -d`
 
-Run RoadRunner with debug mode (`-d` flag):
+Run `RoadRunner`:
 
-`./rr serve -d`
+```shell
+./rr serve -d
+```
 
 ## Usage
 
