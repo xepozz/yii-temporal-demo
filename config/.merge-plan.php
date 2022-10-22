@@ -33,10 +33,16 @@ return [
             'yiisoft/yii-filesystem' => [
                 'config/common.php',
             ],
+            'yiisoft/yii-queue' => [
+                'config/common.php',
+            ],
             'yiisoft/aliases' => [
                 'config/common.php',
             ],
             'yiisoft/cache' => [
+                'config/common.php',
+            ],
+            'yiisoft/translator' => [
                 'config/common.php',
             ],
             'yiisoft/view' => [
@@ -71,13 +77,16 @@ return [
             'yiisoft/log-target-file' => [
                 'config/params.php',
             ],
-            'yiisoft/yii-console' => [
+            'yiisoft/validator' => [
                 'config/params.php',
             ],
             'yiisoft/assets' => [
                 'config/params.php',
             ],
             'yiisoft/profiler' => [
+                'config/params.php',
+            ],
+            'yiisoft/yii-queue' => [
                 'config/params.php',
             ],
             'yiisoft/yii-view' => [
@@ -87,6 +96,12 @@ return [
                 'config/params.php',
             ],
             'yiisoft/data-response' => [
+                'config/params.php',
+            ],
+            'yiisoft/translator' => [
+                'config/params.php',
+            ],
+            'yiisoft/yii-console' => [
                 'config/params.php',
             ],
             'yiisoft/view' => [

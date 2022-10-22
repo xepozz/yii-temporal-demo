@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Formatter;
 
+use OpenApi\Annotations as OA;
 use Yiisoft\Data\Paginator\OffsetPaginator;
 
 /**
