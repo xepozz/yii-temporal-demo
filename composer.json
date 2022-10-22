@@ -32,7 +32,7 @@
         "psr/http-server-middleware": "^1.0",
         "psr/log": "^3.0",
         "spiral/roadrunner": "^2.3",
-        "temporal/sdk": "^1.0",
+        "temporal/sdk": "^2.2",
         "vlucas/phpdotenv": "^5.3",
         "yiisoft/access": "^1.0",
         "yiisoft/aliases": "^2.0.0",
