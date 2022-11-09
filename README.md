@@ -17,7 +17,9 @@ Get `RoadRunner` binary:
 
 Run docker containers:
 
-`docker-compose up -d`
+```shell
+docker-compose up -d
+```
 
 Run `RoadRunner`:
 
