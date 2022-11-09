@@ -50,8 +50,8 @@ final class LongWorkflow
             $promises[] = $activity->slow($name)
                 ->then(
                     function ($result) use ($item) {
-                        $this->start = min($this->start, $result->start);
-                        $this->end = max($this->end, $result->end);
+                        $this->start = min($this->start, $result['start']);
+                        $this->end = max($this->end, $result['end']);
                         $this->done['Task #' . $item] = $result;
                         return $result;
                     }
