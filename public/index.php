@@ -7,6 +7,8 @@ declare(strict_types=1);
  */
 
 // PHP built-in server routing.
+use Yiisoft\Yii\Runner\RoadRunner\RoadRunnerApplicationRunner;
+
 if (PHP_SAPI === 'cli-server') {
     // Serve static files as is.
     /** @psalm-suppress MixedArgument */
@@ -28,5 +30,6 @@ if (getenv('YII_ENV') === 'test') {
     }
 }
 
-$runner = (new \App\ApplicationRunner(dirname(__DIR__), $_ENV['YII_DEBUG'], $_ENV['YII_ENV']));
+$runner = (new RoadRunnerApplicationRunner(dirname(__DIR__), $_ENV['YII_DEBUG'], $_ENV['YII_ENV']))
+    ->withEnabledTemporal(true);
 $runner->run();

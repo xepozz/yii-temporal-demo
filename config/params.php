@@ -129,4 +129,10 @@ return [
             '@src',
         ],
     ],
+
+    'yiisoft/yii-runner-roadrunner' => [
+        'temporal' => [
+            'enabled' => true,
+        ],
+    ],
 ];
